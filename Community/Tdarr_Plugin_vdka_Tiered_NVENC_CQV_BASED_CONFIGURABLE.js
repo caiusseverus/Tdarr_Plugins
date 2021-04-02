@@ -122,29 +122,29 @@ module.exports.plugin = function plugin (file, librarySettings, inputs) {
 
   //codec will be checked so it can be transcoded correctly
   if (file.video_codec_name == 'h263') {
-    response.preset = `-c:v h263_cuvid`
+    response.preset = `-hwaccel cuda -c:v h263_cuvid -hwaccel_output_format cuda`
   } else if (file.video_codec_name == 'h264') {
     if (file.ffProbeData.streams[0].profile != 'High 10') {
       //Remove HW Decoding for High 10 Profile
-      response.preset = `-c:v h264_cuvid`
+      response.preset = `-hwaccel cuda -c:v h264_cuvid -hwaccel_output_format cuda`
     }
   } else if (file.video_codec_name == 'mjpeg') {
-    response.preset = `c:v mjpeg_cuvid`
+    response.preset = `-hwaccel cuda -c:v mjpeg_cuvid -hwaccel_output_format cuda`
   } else if (file.video_codec_name == 'mpeg1') {
-    response.preset = `-c:v mpeg1_cuvid`
+    response.preset = `-hwaccel cuda -c:v mpeg1_cuvid -hwaccel_output_format cuda`
   } else if (file.video_codec_name == 'mpeg2') {
-    response.preset = `-c:v mpeg2_cuvid`
+    response.preset = `-hwaccel cuda -c:v mpeg2_cuvid -hwaccel_output_format cuda`
   }
   // skipping this one because it's empty
   //  else if (file.video_codec_name == 'mpeg4') {
   //    response.preset = ``
   //  }
   else if (file.video_codec_name == 'vc1') {
-    response.preset = `-c:v vc1_cuvid`
+    response.preset = `-hwaccel cuda -c:v vc1_cuvid -hwaccel_output_format cuda`
   } else if (file.video_codec_name == 'vp8') {
-    response.preset = `-c:v vp8_cuvid`
+    response.preset = `-hwaccel cuda -hwaccel_output_format cuda`
   } else if (file.video_codec_name == 'vp9') {
-    response.preset = `-c:v vp9_cuvid`
+    response.preset = `-hwaccel cuda -c:v vp9_cuvid -hwaccel_output_format cuda`
   }
 
   //Set Subtitle Var before adding encode cli
@@ -186,7 +186,7 @@ module.exports.plugin = function plugin (file, librarySettings, inputs) {
   //codec will be checked so it can be transcoded correctly
   if (file.video_resolution === '480p' || file.video_resolution === '576p') {
     cqvinuse = `${inputs.sdCQV}`
-    response.preset += `,${map} -dn -c:v hevc_nvenc -pix_fmt p010le -rc vbr_hq -b:v 0 -preset ${ffmpeg_preset} -cq ${inputs.sdCQV} -rc-lookahead 32 -bf ${inputs.bframe} -a53cc 0 -c:a copy ${subcli}${maxmux}`
+    response.preset += `,${map} -dn -c:v hevc_nvenc -rc vbr_hq -b:v 0 -preset ${ffmpeg_preset} -cq ${inputs.sdCQV} -rc-lookahead 32 -bf ${inputs.bframe} -a53cc 0 -c:a copy ${subcli}${maxmux}`
     transcode = 1
   }
 
@@ -194,21 +194,21 @@ module.exports.plugin = function plugin (file, librarySettings, inputs) {
   //codec will be checked so it can be transcoded correctly
   if (file.video_resolution === '720p') {
     cqvinuse = `${inputs.hdCQV}`
-    response.preset += `,${map} -dn -c:v hevc_nvenc -pix_fmt p010le -rc vbr_hq -b:v 0 -preset ${ffmpeg_preset} -cq ${inputs.hdCQV} -rc-lookahead 32 -bf ${inputs.bframe} -a53cc 0 -c:a copy ${subcli}${maxmux}`
+    response.preset += `,${map} -dn -c:v hevc_nvenc -rc vbr_hq -b:v 0 -preset ${ffmpeg_preset} -cq ${inputs.hdCQV} -rc-lookahead 32 -bf ${inputs.bframe} -a53cc 0 -c:a copy ${subcli}${maxmux}`
     transcode = 1
   }
   //file will be encoded if the resolution is 1080p
   //codec will be checked so it can be transcoded correctly
   if (file.video_resolution === '1080p') {
     cqvinuse = `${inputs.fullhdCQV}`
-    response.preset += `,${map} -dn -c:v hevc_nvenc -pix_fmt p010le -rc vbr_hq -b:v 0 -preset ${ffmpeg_preset} -cq ${inputs.fullhdCQV} -rc-lookahead 32 -bf ${inputs.bframe} -a53cc 0 -c:a copy ${subcli}${maxmux}`
+    response.preset += `,${map} -dn -c:v hevc_nvenc -rc vbr_hq -b:v 0 -preset ${ffmpeg_preset} -cq ${inputs.fullhdCQV} -rc-lookahead 32 -bf ${inputs.bframe} -a53cc 0 -c:a copy ${subcli}${maxmux}`
     transcode = 1
   }
   //file will be encoded if the resolution is 4K
   //codec will be checked so it can be transcoded correctly
   if (file.video_resolution === '4KUHD') {
     cqvinuse = `${inputs.uhdCQV}`
-    response.preset += `,${map} -dn -c:v hevc_nvenc -pix_fmt p010le -rc vbr_hq -b:v 0 -preset ${ffmpeg_preset} -cq ${inputs.uhdCQV} -rc-lookahead 32 -bf ${inputs.bframe} -a53cc 0 -c:a copy ${subcli}${maxmux}`
+    response.preset += `,${map} -dn -c:v hevc_nvenc -rc vbr_hq -b:v 0 -preset ${ffmpeg_preset} -cq ${inputs.uhdCQV} -rc-lookahead 32 -bf ${inputs.bframe} -a53cc 0 -c:a copy ${subcli}${maxmux}`
     transcode = 1
   }
   //check if the file is eligible for transcoding
